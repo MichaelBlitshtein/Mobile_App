@@ -3,6 +3,9 @@ package screens;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.support.FindBy;
+import org.testng.Assert;
+
+import java.util.List;
 
 public class ContactListScreen extends BaseScreen{
     public ContactListScreen(AppiumDriver<MobileElement> driver) {
@@ -17,13 +20,51 @@ public class ContactListScreen extends BaseScreen{
     @FindBy(xpath = "//*[@text='Logout']")
     MobileElement logoutButton;
 
+    @FindBy(xpath = "//*[@resource-id='com.sheygam.contactapp:id/add_contact_btn']")
+    MobileElement plusButton;
+
+    @FindBy(id="com.sheygam.contactapp:id/rowName")
+    List<MobileElement> nameList;
+    @FindBy(id="com.sheygam.contactapp:id/rowPhone")
+    List<MobileElement> phoneList;
+    private void checkContacts(List<MobileElement> list,String text){
+        boolean isPresent = false;
+        for(MobileElement el:list){
+          if(el.getText().contains(text)){
+              isPresent = true;
+              break;
+          }
+        }
+        Assert.assertTrue(isPresent);
+    }
+public ContactListScreen isContactAddedByNameLastName(String name, String lastName){
+    isShouldHave(activityTextView,"Contact list",10);
+    checkContacts(nameList,name+" "+lastName);
+
+    return this;
+}
+
+public ContactListScreen isContactAddedByPhone(String phone){
+    isShouldHave(activityTextView,"Contact list",10);
+    checkContacts(phoneList,phone);
+    return this;
+}
+   public AddNewContactScreen openContactForm(){
+       plusButton.click();
+       return new AddNewContactScreen(driver);
+   }
+
     public boolean isContactListActivityDisplayed(){
         return isShouldHave(activityTextView,"Contact list",10);
     }
 
     public AuthenticationScreen logout(){
-        moreOptions.click();
-        logoutButton.click();
+        if(activityTextView.getText().equals("Contact list")) {
+            moreOptions.click();
+            should(logoutButton, 2);
+            logoutButton.click();
+        }
+
         return new AuthenticationScreen(driver);
     }
 }
