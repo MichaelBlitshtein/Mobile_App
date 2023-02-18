@@ -3,8 +3,11 @@ package tests;
 import config.AppiumConfig;
 import models.Auth;
 import models.Contact;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import screens.AddNewContactScreen;
 import screens.AuthenticationScreen;
 import screens.ContactListScreen;
 
@@ -41,10 +44,10 @@ public class AddContactTests extends AppiumConfig {
 
     @Test
     public void addNewContactEmptyName(){
-        int i = new Random().nextInt(1000)+1000;
+
         Contact contact = Contact.builder()
                 .lastName("Larson")
-                .email("lars"+i+"@mail.ru")
+                .email("lars@mail.ru")
                 .phone("8529638741")
                 .address("Ramat Gan")
                 .description("classmate").build();
@@ -52,12 +55,29 @@ public class AddContactTests extends AppiumConfig {
         new ContactListScreen(driver)
                 .openContactForm()
                 .fillContactForm(contact)
-                .submitContactFormNegative();
-//проверки написать
+                .submitContactFormNegative()
+                .isErrorMessageHasText("{name=must not be blank}")
+                .clickOKButton();
+
+
     }
 
     @Test
     public void addNewContactEmptyLastName(){
+        Contact contact = Contact.builder()
+                .name("Julia")
+                .email("lars@mail.ru")
+                .phone("8529638741")
+                .address("Ramat Gan")
+                .description("classmate").build();
 
+        new ContactListScreen(driver)
+                .openContactForm()
+                .fillContactForm(contact)
+                .submitContactFormNegative()
+                .isErrorMessageHasText("{lastName=must not be blank}")
+                .clickOKButton();
     }
+
+
 }
