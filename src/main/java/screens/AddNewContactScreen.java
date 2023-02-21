@@ -61,4 +61,10 @@ public class AddNewContactScreen extends BaseScreen{
         okButton.click();
         return this;
     }
+
+    public ContactListScreen returnToContactList(){
+       pause(2000);
+        driver.navigate().back();
+        return new ContactListScreen(driver);
+    }
 }

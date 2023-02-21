@@ -3,19 +3,18 @@ package tests;
 import config.AppiumConfig;
 import models.Auth;
 import models.Contact;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import screens.AddNewContactScreen;
 import screens.AuthenticationScreen;
 import screens.ContactListScreen;
 
 import java.util.Random;
 
-public class AddContactTests extends AppiumConfig {
+public class AddContactBeforeClassTests extends AppiumConfig {
 
-    @BeforeMethod
+    @BeforeClass
     public void preCondition(){
         new AuthenticationScreen(driver)
                 .fillLoginRegistrationForm(Auth.builder().email("michael+1@gmail.com").password("Michael12345$").build())
@@ -38,8 +37,8 @@ public class AddContactTests extends AppiumConfig {
                 .fillContactForm(contact)
                 .submitContactForm()
                 .isContactAddedByNameLastName(contact.getName(),contact.getLastName())
-                .isContactAddedByPhone(contact.getPhone())
-                .logout();
+                .isContactAddedByPhone(contact.getPhone());
+
     }
 
     @Test
@@ -57,9 +56,7 @@ public class AddContactTests extends AppiumConfig {
                 .fillContactForm(contact)
                 .submitContactFormNegative()
                 .isErrorMessageHasText("{name=must not be blank}")
-                .clickOKButton()
-                .returnToContactList()
-                .logout();
+                .clickOKButton();
 
 
     }
@@ -81,5 +78,10 @@ public class AddContactTests extends AppiumConfig {
                 .clickOKButton();
     }
 
+    @AfterClass
+    public void postCondition(){
+        new ContactListScreen(driver)
+                .logout();
+    }
 
 }
